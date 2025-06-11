@@ -1,0 +1,8 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="container mt-5 text-center">
+  <h2 class="text-success">Application Successful!</h2>
+  <p>You have applied for <strong>{{ job.title }}</strong>.</p>
+  <a href="{% url 'home' %}" class="btn btn-outline-primary mt-3">Go Back to Home</a>
+</div>
+{% endblock %}

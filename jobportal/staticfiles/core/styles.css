@@ -1,0 +1,8 @@
+/* Customize card headers */
+.card-body h5 a {
+  color: #007bff;
+  text-decoration: none;
+}
+.card-body h5 a:hover {
+  text-decoration: underline;
+}

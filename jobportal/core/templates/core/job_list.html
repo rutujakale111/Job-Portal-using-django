@@ -1,0 +1,35 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}Job Listings{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Available Job Listings</h2>
+    
+    {% if jobs %}
+        <div class="row">
+            {% for job in jobs %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ job.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ job.company_name }}</h6>
+                        <p class="card-text">{{ job.description|truncatechars:150 }}</p>
+                        <p><strong>Location:</strong> {{ job.location }}</p>
+                        <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
+                        <a href="{% url 'job_detail' job.id %}" class="btn btn-primary btn-sm">View Details</a>
+                        <a href="{% url 'apply_job' job.id %}" class="btn btn-outline-success btn-sm">Apply</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center">
+            No jobs available at the moment. Please check back later.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

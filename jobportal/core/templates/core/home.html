@@ -1,0 +1,21 @@
+<h2 class="text-center mt-4 mb-3">Available Job Listings</h2>
+
+{% if jobs %}
+    {% for job in jobs %}
+        <div class="card my-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ job.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ job.company_name }}</h6>
+                <p class="card-text">{{ job.description }}</p>
+                <p>{{ job.location }}</p>
+        <a href="{% url 'job_detail' job.pk %}">View Details</a>
+                <a href="{% url 'apply_job' job.id %}" class="btn btn-primary">Apply</a>
+                <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-warning text-center mx-5">
+        No jobs available at the moment. Please check back later.
+    </div>
+{% endif %}
