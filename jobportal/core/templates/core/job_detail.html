@@ -21,13 +21,16 @@
       </div>
 
       {% if user.is_authenticated %}
-        <a href="{% url 'apply_job' job.pk %}" class="btn btn-success btn-lg">
-          Apply Now
-        </a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'apply_job' job.pk %}?next={{ request.get_full_path }}">Apply Now</a>
       {% else %}
-        <div class="alert alert-info mt-3">
-          <em>Please <a href="{% url 'login' %}">login</a> to apply for this job.</em>
-        </div>
+      <a href="{% url 'login' %}?next={% url 'apply_job' job.pk %}">Login to apply</a>
+      {% endif %}
+
+      {% else %}
+      <div class="alert alert-info mt-3">
+        <em>Please <a href="{% url 'login' %}">login</a> to apply for this job.</em>
+      </div>
       {% endif %}
     </div>
   </div>
@@ -39,12 +42,12 @@
     </div>
     <ul class="list-group list-group-flush">
       {% for app in job.applications.all %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <strong>{{ app.applicant.username }}</strong>
-          <span class="text-muted">{{ app.applied_at|date:"M d, Y" }}</span>
-        </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>{{ app.applicant.username }}</strong>
+        <span class="text-muted">{{ app.applied_at|date:"M d, Y" }}</span>
+      </li>
       {% empty %}
-        <li class="list-group-item text-muted">No applications yet.</li>
+      <li class="list-group-item text-muted">No applications yet.</li>
       {% endfor %}
     </ul>
   </div>

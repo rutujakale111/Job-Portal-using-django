@@ -90,7 +90,9 @@ class HomeView(ListView):
 @login_required
 def apply_job(request, pk):
     profile = Profile.objects.filter(user=request.user).first()
-    if not profile or not profile.full_name or not profile.resume:
+    if not profile or not profile.resume or not profile.full_name:
+        request.session['next_after_profile'] = request.get_full_path()
+        messages.warning(request, "Please complete your profile before applying.")
         return redirect('create_or_update_profile')
 
     job = get_object_or_404(Job, pk=pk)
@@ -107,10 +109,10 @@ def apply_job(request, pk):
 
 
 
-# Job detail view (if you're using function-based views)
 def job_detail(request, pk):
     job = get_object_or_404(Job, pk=pk)
     return render(request, 'core/job_detail.html', {'job': job})
+
 
 @login_required
 def create_or_update_profile(request):
@@ -120,11 +122,15 @@ def create_or_update_profile(request):
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('job_list')  # ✅ this return is inside the if-block
+            # ⏪ Redirect to original job page if stored in session
+            next_url = request.session.pop('next_after_profile', None)
+            if next_url:
+                return redirect(next_url)
+            return redirect('job_list')
     else:
         form = ProfileForm(instance=profile)
 
-    return render(request, 'core/profile_form.html', {'form': form})  # ✅ this is outside the if-else but still inside the function
+    return render(request, 'core/profile_form.html', {'form': form})
 
 
 def custom_logout(request):
@@ -135,13 +141,11 @@ def custom_logout(request):
 
 def logout_confirm_view(request):
     if request.method == 'POST':
-        # Delete the user's profile if it exists
         if request.user.is_authenticated:
+            # ✅ Delete the user's profile
             Profile.objects.filter(user=request.user).delete()
-
-        logout(request)
-        messages.success(request, "You have been logged out and your profile has been removed.")
-        return redirect('home')
-
+            logout(request)
+            messages.success(request, "You have been logged out and your profile has been removed.")
+        return redirect('home')  # redirect to homepage
     return render(request, 'core/logout_confirm.html')
 
